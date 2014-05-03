@@ -1,9 +1,9 @@
 Wordpress Multisite Networkwide Notification
 ==============================
 
-Allows header and shortcode notifications with expiration date/time on Wordpress Multisite (MU) networks
+Allows header and shortcode notifications with expiration date/time on front-end of sites on a Wordpress Multisite (MU) network.
 
-This plugin was originally designed for school districts to push important updates about school closings or event delays/cancellations to their multisite networks. However, it can have applications for 
+This plugin was originally designed for school districts to push important updates about school closings or event delays/cancellations to their multisite networks. However, it can have applications for for any kind of multisite network requiring control from a network admin level to push updates to the front-end of sites.
 
 Features:
 *Select to display the notification via shortcode (less important), header (more important) or both (most important)
@@ -16,3 +16,4 @@ Features:
 Coming Soon:
 *Network superadmin can also give primary site admins ability to manage the plugin from site dashboard
 *Include icons with your messages
+*Many more...
