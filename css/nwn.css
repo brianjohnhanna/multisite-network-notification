@@ -80,7 +80,7 @@
 
 #color_scheme label input {
     position:absolute;
-    top:-20px;
+    left:-2000px;
 }
 
 #color_scheme input:checked + span {

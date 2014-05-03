@@ -35,10 +35,10 @@ function add_backend_nwn_scripts(){
 	wp_enqueue_script('datepickerjs', plugins_url('js/jquery.datetimepicker.js',__FILE__), array('jquery'));
 	wp_enqueue_style('datepickercss', plugins_url('css/jquery.datetimepicker.css',__FILE__));
 	wp_enqueue_style('custom', plugins_url('css/nwn.css',__FILE__));
-	wp_enqueue_style('iconcss', plugins_url('css/grey-theme/jquery.fonticonpicker.min.css',__FILE__));
-	wp_enqueue_style('fontello', plugins_url('css/fontello.css',__FILE__));
-	wp_enqueue_script('iconjs', plugins_url('js/jquery.fonticonpicker.js',__FILE__), array('jquery'));
-	wp_enqueue_style('datatablescss', 'http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.csscss/fontello.css');
+	// wp_enqueue_style('iconcss', plugins_url('css/grey-theme/jquery.fonticonpicker.min.css',__FILE__));
+	// wp_enqueue_style('fontello', plugins_url('css/fontello.css',__FILE__));
+	// wp_enqueue_script('iconjs', plugins_url('js/jquery.fonticonpicker.js',__FILE__), array('jquery'));
+	wp_enqueue_style('datatablescss', 'http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css');
 	wp_enqueue_script('datatablesjs', 'http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js', array('jquery'));
 		}
 	}
@@ -60,12 +60,12 @@ add_action('wp_enqueue_scripts','add_frontend_nwn_scripts');
 add_action('network_admin_menu', 'add_nwn_settings_page');
 function add_nwn_settings_page() {
   add_submenu_page(
-       'settings.php',
-       'Network Wide Notification',
-       'Network Wide Notification',
-       'manage_network_options',
-       'nwn-settings',
-       'networkwide_message_form'
+    	'settings.php',
+    	'Network Wide Notification',
+    	'Network Wide Notification',
+    	'manage_network_options',
+    	'nwn-settings',
+    	'networkwide_message_form'
   );    
 }
 
@@ -78,10 +78,10 @@ $blog_id = get_current_blog_id();
 if (($blog_id == '1') && ($options['primary_admin'])) {
 	add_options_page( 
 		'Network Wide Notification',
-       'Network Wide Notification',
-       'manage_options',
-       'nwn-settings-2',
-       'networkwide_message_form' 
+    	'Network Wide Notification',
+    	'manage_options',
+    	'nwn-settings-2',
+    	'networkwide_message_form' 
 	);
 
 }
@@ -136,7 +136,6 @@ function nwn_updates() {
     	'shortcode' => $options['shortcode'],
     	'headerbar' => $options['headerbar'],
     	'on_off' => $options['on_off'],
-    	'on_off_2' => (isset($options['on_off_2'])) ? 'off' : 'on',
     	'site_id' => $site_id,
     	'primary_admin' => $options['primary_admin']
     );
@@ -151,53 +150,14 @@ function networkwide_message_form(){
   $options = get_site_option('nwn_options');  
   wp_nonce_field('update-options');
   ?>
-  <script>
+
+<script>
   jQuery(document).ready(function($){
 
 //Date Picker JS
 
   $('#datetimepicker').datetimepicker({
   format:'m/d/Y H:i'
-  });
-
-//Icon Picker JS
-
-   	$('#myselect').fontIconPicker({
-		source: ['icon-heart', 'icon-lemon', 'icon-user', 'icon-tag', 'icon-help'],
-		emptyIcon: true,
-		hasSearch: false
-	});
-
-
-//Select All JS
-
-  $('#selectall').click(function () {
-        $('.selectedId').prop('checked', isChecked('selectall'));
-    });
-    function isChecked(checkboxId) {
-    var id = '#' + checkboxId;
-    return $(id).is(":checked");
-}
-function resetSelectAll() {
-    // if all checkbox are selected, check the selectall checkbox
-    // and viceversa
-    if ($(".selectedId").length == $(".selectedId:checked").length) {
-        $("#selectall").attr("checked", "checked");
-    } else {
-        $("#selectall").removeAttr("checked");
-    }
-
-    if ($(".selectedId:checked").length > 0) {
-        $('#edit').attr("disabled", false);
-    } else {
-        $('#edit').attr("disabled", true);
-    }
-}
-
-//Live Preview JS
-
-	$('input#nwn_options[message]').keyup(function () { alert('test'); });
-
   });
 
 // Color Scheme Toggle JS
@@ -294,8 +254,8 @@ if(isset($_POST['nwn_update'])){ ?>
 			    <label>Display Location</label>
 		    </th>
 		    <td id="location-p">
-			    <input type="checkbox" name="nwn_options[shortcode]" class="shortcode-p" id="nwn_options[shortcode]" value="shortcode" <?php if ($options['shortcode'] == "shortcode") echo "checked"; ?>>Shortcode [display_notification]<br />
-			    <input type="checkbox" name="nwn_options[headerbar]" id="nwn_options[headerbar]" value="headerbar" <?php if ($options['headerbar'] == "headerbar") echo "checked"; ?>>Header Notification Bar
+			    <input type="checkbox" name="nwn_options[shortcode]" class="shortcode-p" id="nwn_options[shortcode]" <?php if ($options['shortcode']) echo "checked"; ?>>Shortcode [display_notification]<br />
+			    <input type="checkbox" name="nwn_options[headerbar]" id="nwn_options[headerbar]" <?php if ($options['headerbar']) echo "checked"; ?>>Header Notification Bar
 			     <p class="description">Set a location for the message to display.</p>
 	    	</td>
 	    </tr>
@@ -317,7 +277,8 @@ if(isset($_POST['nwn_update'])){ ?>
 <!-- Select which site(s) to display on: -->
 	    <tr valign="top">
 	    	<th scope="row">
-			    <label>Select which site(s) to display on: </label>
+			    <label>Select which site(s) to display on: </label><br />
+			    <em>If none are selected, message will display on all sites</em>
 			</th>
 			<td>
 			<table id="sites">
@@ -372,7 +333,6 @@ if(isset($_POST['nwn_update'])){ ?>
 	</tbody>
 </table>
 <input type="submit" name="nwn_update" id="nwn_update" class="button-primary" value="Update Message & Preview">
-<input type="submit" name="nwn_options[on_off_2]" id="nwn_options[on_off_2]" <?php if ($options['on_off_2'] == "on"): echo "class='button-primary nwn-red' value='Turn Off'"; else: echo "class='button-primary nwn-green' value='Turn On'"; endif;?>>
 </form>
 </div>
 
@@ -381,7 +341,7 @@ if(isset($_POST['nwn_update'])){ ?>
 <div id="nwn-preview">
 	<h3>Live Preview</h3>
 	<div class="browser">
-		<?php if (($options['headerbar'] == 'headerbar') && ($options['shortcode'] == 'shortcode')): ?>
+		<?php if (($options['headerbar']) && ($options['shortcode'])): ?>
 		<div class="header" style="background-color:<?php echo $options['color_scheme'];?>">
 			<p class="message-preview"><?php echo $options['message']; ?></p>
 		</div>
@@ -404,25 +364,39 @@ if(isset($_POST['nwn_update'])){ ?>
 </div>
 </div>
 <script type="text/javascript">
-jQuery('#color_scheme input').change(function($){
+
+//Live Preview
+//Color Scheme
+jQuery('#color_scheme input:radio[name="nwn_options[color_scheme]"]').change(function($){
    var css = jQuery(this).attr("value");
    jQuery(".header").css('background-color',jQuery(this).val());
    jQuery(".spreview").css('color',jQuery(this).val());
 });
+
+//Message
 jQuery('#message-p input').keyup(function($){
 	var keyed = jQuery(this).val();
       jQuery('.message-preview').html(keyed);
 });
-// jQuery('#location-p input#nwn_options[shortcode]').change(function($){
-// 	var keyed = jQuery(this).val();
-//       jQuery('.message-preview').html(keyed);
-// });
-jQuery('.shortcode-p').change(function($){
-  if (this.checked) {
-    jQuery('#spreview').fadeIn('slow');
-  } else {
-    jQuery('#spreview').fadeOut('slow');
-  }                   
+
+//Location
+
+jQuery('input:checkbox[name="nwn_options[shortcode]"]').change(function($) {
+    if(this.checked) {
+        jQuery('.spreview').fadeIn();
+    }
+    else{
+    	jQuery('.spreview').fadeOut();
+    }
+});
+
+jQuery('input:checkbox[name="nwn_options[headerbar]"]').change(function($) {
+    if(this.checked) {
+        jQuery('.header').fadeIn();
+    }
+    else{
+    	jQuery('.header').fadeOut();
+    }
 });
 </script>
   <?php
@@ -439,40 +413,40 @@ function notifybar(){
 	$now = strtotime("now");
 	$site_id_pieces = explode(',', $options['site_id']);
 	$unixTimeDate = strtotime($options['timeDate']);
-if ($unixTimeDate >= $now && $options['on_off']){
-if (in_array($blog_id, $site_id_pieces)){
-if ($options['headerbar'] == 'headerbar'){
-?>  
-<style type="text/css">
-#notifybar{top:0px;}
-#notifybar .notifybar_topsec .notifybar_center .notifybar_block {color:#f2f2f2;}
-#notifybar .notifybar_topsec .notifybar_center .notifybar_button {color:#9b59b6;}
-body{margin-top: 45px;}
+	if ($unixTimeDate >= $now && $options['on_off']){
+		if ((in_array($blog_id, $site_id_pieces)) || (is_null($options['site_id']))) {
+			if ($options['headerbar']){
+			?>  
+				<style type="text/css">
+				#notifybar{top:0px;}
+				#notifybar .notifybar_topsec .notifybar_center .notifybar_block {color:#f2f2f2;}
+				#notifybar .notifybar_topsec .notifybar_center .notifybar_button {color:#9b59b6;}
+				body{margin-top: 45px;}
 
-</style>
+				</style>
 
-	<div id="notifybar">
-		<a class="nbar_downArr" href="#nbar_downArr" style="display:none;"></a>
-		<div class="notifybar_topsec" style="background-color:<?php echo $options['color_scheme']; ?>;">
-			<div class="notifybar_center">
-				<div class="notifybar_block"><?php echo $options['message']; ?></div>
-			</div>
-			<a href="JavaScript:void(0);" class="notifybar_close"></a>
-		</div>
-	</div>
-	<a href="JavaScript:void(0);" class="notifybar_botsec" id="nbar_downArr" style="background-color:blue"></a>
-<?php } ?>
-<script type="text/javascript">
-	$(document).ready(function(){
-		$('body').prepend('<div class="notifybar_push"></div>');
-		$('#notifybar').notifybar({staytime:'6000'});
-	});
-</script>
-<?php 
+					<div id="notifybar">
+						<a class="nbar_downArr" href="#nbar_downArr" style="display:none;"></a>
+						<div class="notifybar_topsec" style="background-color:<?php echo $options['color_scheme']; ?>;">
+							<div class="notifybar_center">
+								<div class="notifybar_block"><?php echo $options['message']; ?></div>
+							</div>
+							<a href="JavaScript:void(0);" class="notifybar_close"></a>
+						</div>
+					</div>
+					<a href="JavaScript:void(0);" class="notifybar_botsec" id="nbar_downArr" style="background-color:blue"></a>
+			<?php } ?>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$('body').prepend('<div class="notifybar_push"></div>');
+					$('#notifybar').notifybar({staytime:'6000'});
+				});
+			</script>
+			<?php 
 
-}
-}
-}
+			}
+		}
+	}
 add_action('wp_footer', 'notifybar');
 
 function display_notification() {
@@ -482,17 +456,17 @@ function display_notification() {
 	$now = strtotime("now");
 	$site_id_pieces = explode(',', $options['site_id']);
 	$unixTimeDate = strtotime($options['timeDate']);
-if ($unixTimeDate >= $now && $options['on_off']){
-if (in_array($blog_id, $site_id_pieces)){
-if ($options['shortcode'] == 'shortcode'){
-	$text = "<h4 class='message' style='color:" . $options['color_scheme'] . "'>" . $options['message'] . "</h4>";
-	return $text;
+	if ($unixTimeDate >= $now && $options['on_off']){
+		if (in_array($blog_id, $site_id_pieces)){
+			if ($options['shortcode']){
+				$text = "<h4 class='message' style='color:" . $options['color_scheme'] . "'>" . $options['message'] . "</h4>";
+				return $text;
+			}
+				
+			else return null;
+				
+		}
 	}
-	
-	else return null;
-	
-}
-}
 }
 add_shortcode( 'display_notification', 'display_notification' );
 
