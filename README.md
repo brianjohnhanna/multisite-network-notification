@@ -9,13 +9,13 @@ This plugin was originally designed for school districts to push important updat
 
 - Select to display the notification via shortcode (less important), header (more important) or both (most important)
 - Set the color scheme
+- Include icons with your messages
 - Access settings panel from Network admin menu
 - Set expiration time and date for messages - set it and forget it
-- Live preview of message from the settings panel
-- If desired, select which sites on the network to display the message (instead of all sites by default )
+- Live, jQuery-powered preview of message from the settings panel
+- If desired, select which sites on the network to display the message (instead of all sites by default)
 
 ## Coming Soon:
 
 - Network superadmin can also give primary site admins ability to manage the plugin from site dashboard
-- Include icons with your messages
 - Many more...
