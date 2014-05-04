@@ -35,9 +35,8 @@ function add_backend_nwn_scripts(){
 	wp_enqueue_script('datepickerjs', plugins_url('js/jquery.datetimepicker.js',__FILE__), array('jquery'));
 	wp_enqueue_style('datepickercss', plugins_url('css/jquery.datetimepicker.css',__FILE__));
 	wp_enqueue_style('custom', plugins_url('css/nwn.css',__FILE__));
-	// wp_enqueue_style('iconcss', plugins_url('css/grey-theme/jquery.fonticonpicker.min.css',__FILE__));
-	// wp_enqueue_style('fontello', plugins_url('css/fontello.css',__FILE__));
-	// wp_enqueue_script('iconjs', plugins_url('js/jquery.fonticonpicker.js',__FILE__), array('jquery'));
+	wp_enqueue_script('customjs', plugins_url('js/nwn.js',__FILE__), array('jquery'));
+	wp_enqueue_style('fa', 'http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css');
 	wp_enqueue_style('datatablescss', 'http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css');
 	wp_enqueue_script('datatablesjs', 'http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js', array('jquery'));
 		}
@@ -50,6 +49,7 @@ function add_frontend_nwn_scripts(){
 	wp_enqueue_script ('jquery');
 	wp_enqueue_script('notifybar',plugins_url('js/notifybar.js',__FILE__), array('jquery'));
 	wp_enqueue_style('notifybar',plugins_url('css/notifybar.css',__FILE__));
+	wp_enqueue_style('fa', 'http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css');
 }
 
 add_action('wp_enqueue_scripts','add_frontend_nwn_scripts');
@@ -132,6 +132,7 @@ function nwn_updates() {
 	    $update_val = array(
 		'message' => $options['message'],
 		'timeDate' => $options['timeDate'],
+		'icon' => $options['icon'],
 		'color_scheme' => $options['color_scheme'],
     	'shortcode' => $options['shortcode'],
     	'headerbar' => $options['headerbar'],
@@ -143,6 +144,8 @@ function nwn_updates() {
 return $update_val;
 }
 
+//-------------------------------------------------------------------------------------
+
 // Add Settings Form
 
 function networkwide_message_form(){
@@ -150,33 +153,8 @@ function networkwide_message_form(){
   $options = get_site_option('nwn_options');  
   wp_nonce_field('update-options');
   ?>
-
-<script>
-  jQuery(document).ready(function($){
-
-//Date Picker JS
-
-  $('#datetimepicker').datetimepicker({
-  format:'m/d/Y H:i'
-  });
-
-// Color Scheme Toggle JS
-
-  jQuery('label').click(function($){
-    $(this).children('span').addClass('input-checked');
-    $(this).parent('.toggle').siblings('.toggle').children('label').children('span').removeClass('input-checked');
-});
-
-//Datatables
-
-jQuery(document).ready( function ($) {
-  var table = $('#sites').DataTable();
-} );
-
-  </script>
   
-
-  <!-- Start Districtwide Message Form -->
+ <!-- Start Districtwide Message Form -->
 <h2>Network Wide Notification</h2>
 <div id="nwn-settings">
 <div id="nwn-form">
@@ -209,29 +187,14 @@ if(isset($_POST['nwn_update'])){ ?>
 			    <label>Icon</label>
 		    </th>
 		    <td>
-		<select id="myselect" name="myselect" class="myselect">
+		<select id="nwn_options[icon]" name="nwn_options[icon]">
 			<option value="">No icon</option>
-			<option>icon-user</option>
-			<option>icon-search</option>
-			<option>icon-right-dir</option>
-			<option>icon-star</option>
-			<option>icon-cancel</option>
-			<option>icon-help-circled</option>
-			<option>icon-info-circled</option>
-			<option>icon-eye</option>
-			<option>icon-tag</option>
-			<option>icon-bookmark</option>
-			<option>icon-heart</option>
-			<option>icon-thumbs-down-alt</option>
-			<option>icon-upload-cloud</option>
-			<option>icon-phone-squared</option>
-			<option>icon-cog</option>
-			<option>icon-wrench</option>
-			<option>icon-volume-down</option>
-			<option>icon-down-dir</option>
-			<option>icon-up-dir</option>
-			<option>icon-left-dir</option>
-			<option>icon-thumbs-up-alt</option>
+			<option value="fa-exclamation-triangle" <?php if ($options['icon'] == 'fa-exclamation-triangle') echo 'selected'; ?>>Alert</option>
+			<option value="fa-calendar" <?php if ($options['icon'] == 'fa-calendar') echo 'selected'; ?>>Calendar</option>
+			<option value="fa-bullhorn" <?php if ($options['icon'] == 'fa-bullhorn') echo 'selected'; ?>>Bullhorn</option>
+			<option value="fa-star" <?php if ($options['icon'] == 'fa-star') echo 'selected'; ?>>Star</option>
+			<option value="fa-flag" <?php if ($options['icon'] == 'fa-flag') echo 'selected'; ?>>Flag</option>
+			<option value="fa-comments" <?php if ($options['icon'] == 'fa-comments') echo 'selected'; ?>>Speech Bubbles</option>
 		</select>
 
 			</td>
@@ -321,14 +284,14 @@ if(isset($_POST['nwn_update'])){ ?>
 		</tr>
 <!-- Primary Blog Admin Access -->
 <?php if (is_network_admin()){ ?>
-	    <tr valign="top">
+	  <!--   <tr valign="top">
 	    	<th scope="row">
 			    <label>Allow Admin Control on Primary Blog?: </label>
 			</th>
 			<td>
 			   <input type="checkbox" name="nwn_options[primary_admin]" id="nwn_options[primary_admin]" <?php if ($options['primary_admin']) echo 'checked'; ?> >
 			</td>
-		</tr>
+		</tr> -->
 <?php } ?>
 	</tbody>
 </table>
@@ -343,18 +306,18 @@ if(isset($_POST['nwn_update'])){ ?>
 	<div class="browser">
 		<?php if (($options['headerbar']) && ($options['shortcode'])): ?>
 		<div class="header" style="background-color:<?php echo $options['color_scheme'];?>">
-			<p class="message-preview"><?php echo $options['message']; ?></p>
+			<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
 		</div>
 		<div class="spreview" style="color:<?php echo $options['color_scheme'];?>">
-				<p class="message-preview"><?php echo $options['message']; ?></p>
+				<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
 		</div>
 	<?php elseif ($options['headerbar']): ?>
 		<div class="header" style="background-color:<?php echo $options['color_scheme'];?>">
-			<p class="message-preview"><?php echo $options['message']; ?></p>
+			<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
 		</div>
 	<?php elseif ($options['shortcode'] == 'shortcode'): ?>
 		<div class="spreview" style="color:<?php echo $options['color_scheme'];?>">
-			<p class="message-preview"><?php echo $options['message']; ?></p>
+			<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
 		</div>
 	<?php else: ?>
 	<div class="nothing">You haven't selected a location yet!</div>
@@ -363,42 +326,7 @@ if(isset($_POST['nwn_update'])){ ?>
 	</div>
 </div>
 </div>
-<script type="text/javascript">
 
-//Live Preview
-//Color Scheme
-jQuery('#color_scheme input:radio[name="nwn_options[color_scheme]"]').change(function($){
-   var css = jQuery(this).attr("value");
-   jQuery(".header").css('background-color',jQuery(this).val());
-   jQuery(".spreview").css('color',jQuery(this).val());
-});
-
-//Message
-jQuery('#message-p input').keyup(function($){
-	var keyed = jQuery(this).val();
-      jQuery('.message-preview').html(keyed);
-});
-
-//Location
-
-jQuery('input:checkbox[name="nwn_options[shortcode]"]').change(function($) {
-    if(this.checked) {
-        jQuery('.spreview').fadeIn();
-    }
-    else{
-    	jQuery('.spreview').fadeOut();
-    }
-});
-
-jQuery('input:checkbox[name="nwn_options[headerbar]"]').change(function($) {
-    if(this.checked) {
-        jQuery('.header').fadeIn();
-    }
-    else{
-    	jQuery('.header').fadeOut();
-    }
-});
-</script>
   <?php
 
 }
@@ -413,7 +341,7 @@ function notifybar(){
 	$now = strtotime("now");
 	$site_id_pieces = explode(',', $options['site_id']);
 	$unixTimeDate = strtotime($options['timeDate']);
-	if ($unixTimeDate >= $now && $options['on_off']){
+	if ($unixTimeDate >= $now && $options['on_off'] && $options['message']){
 		if ((in_array($blog_id, $site_id_pieces)) || (is_null($options['site_id']))) {
 			if ($options['headerbar']){
 			?>  
@@ -429,7 +357,7 @@ function notifybar(){
 						<a class="nbar_downArr" href="#nbar_downArr" style="display:none;"></a>
 						<div class="notifybar_topsec" style="background-color:<?php echo $options['color_scheme']; ?>;">
 							<div class="notifybar_center">
-								<div class="notifybar_block"><?php echo $options['message']; ?></div>
+								<div class="notifybar_block"><?php echo '<i class="fa ' . $options['icon'] . '"></i> ' . $options['message']; ?></div>
 							</div>
 							<a href="JavaScript:void(0);" class="notifybar_close"></a>
 						</div>
@@ -456,10 +384,10 @@ function display_notification() {
 	$now = strtotime("now");
 	$site_id_pieces = explode(',', $options['site_id']);
 	$unixTimeDate = strtotime($options['timeDate']);
-	if ($unixTimeDate >= $now && $options['on_off']){
-		if (in_array($blog_id, $site_id_pieces)){
+	if ($unixTimeDate >= $now && $options['on_off'] && $options['message']){
+		if ((in_array($blog_id, $site_id_pieces)) || (is_null($options['site_id']))) {
 			if ($options['shortcode']){
-				$text = "<h4 class='message' style='color:" . $options['color_scheme'] . "'>" . $options['message'] . "</h4>";
+				$text = "<h4 class='message' style='color:" . $options['color_scheme'] . "'><i class='fa " . $options['icon'] . "'></i> " . $options['message'] . "</h4>";
 				return $text;
 			}
 				
