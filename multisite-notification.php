@@ -304,25 +304,22 @@ if(isset($_POST['nwn_update'])){ ?>
 <div id="nwn-preview">
 	<h3>Live Preview</h3>
 	<div class="browser">
-		<?php if (($options['headerbar']) && ($options['shortcode'])): ?>
-		<div class="header" style="background-color:<?php echo $options['color_scheme'];?>">
-			<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
-		</div>
-		<div class="spreview" style="color:<?php echo $options['color_scheme'];?>">
+	<?php if ((!$options['headerbar']) && (!$options['shortcode'])){
+		echo "<div class='nothing'>You haven't selected a location yet! Select a location to the left and save to enable the preview.</div>";
+	} else{
+		if ($options['headerbar']){ ?>
+			<div class="header" style="background-color:<?php echo $options['color_scheme'];?>">
 				<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
-		</div>
-	<?php elseif ($options['headerbar']): ?>
-		<div class="header" style="background-color:<?php echo $options['color_scheme'];?>">
-			<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
-		</div>
-	<?php elseif ($options['shortcode'] == 'shortcode'): ?>
-		<div class="spreview" style="color:<?php echo $options['color_scheme'];?>">
-			<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
-		</div>
-	<?php else: ?>
-	<div class="nothing">You haven't selected a location yet!</div>
-	<?php endif;
-	?>
+			</div>
+		<?php } 
+
+		if ($options['shortcode']){ ?>
+			<div class="spreview" style="color:<?php echo $options['color_scheme'];?>">
+				<p class="message-preview"><?php echo '<i class="fa ' . $options['icon'] . '"></i> <span class="message-text">' . $options['message'] . '</span>'; ?></p>
+				
+			</div>
+			<?php }  
+		} ?>
 	</div>
 </div>
 </div>
